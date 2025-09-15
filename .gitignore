@@ -1,0 +1,96 @@
+# ===================================================================
+# A comprehensive gitignore file.
+# Lines starting with '#' are comments.
+# ===================================================================
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# It's better to regenerate these files from a manifest file (e.g., package.json, requirements.txt)
+/node_modules
+/bower_components
+/jspm_packages
+/vendor
+/venv
+/env
+
+# Build results #
+#################
+/build/
+/dist/
+/target/
+/out/
+.gradle/
+/coverage/
+
+# Operating System generated files #
+####################################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor directories #
+############################
+# Add your specific editor's temporary files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+*.swp
+*~
+
+# Log files #
+#############
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python cache and temp files #
+###############################
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.tox/
+.nox/
+.eggs/
+
+# Sensitive Information - VERY IMPORTANT #
+##########################################
+# Never commit secrets, API keys, or credentials!
+.env
+.env.*
+!.env.example
+credentials.json
+*.pem
+*.key
+config.json
+
+# Compressed files #
+####################
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
