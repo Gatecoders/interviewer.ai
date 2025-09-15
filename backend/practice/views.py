@@ -11,27 +11,17 @@ import os
 log_path = os.path.join(os.path.dirname(__file__), '..', 'debug.log')
 log_dir = os.path.dirname(os.path.abspath(log_path))
 os.makedirs(log_dir, exist_ok=True)
-
-# Create logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-# Avoid duplicate handlers if this module is reloaded
 if not logger.handlers:
-    # Create file handler
     file_handler = logging.FileHandler(os.path.abspath(log_path))
     file_handler.setLevel(logging.DEBUG)
-    
-    # Create console handler
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)  # or logging.INFO for less noise
-
-    # Create formatter
+    console_handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(formatter)
     console_handler.setFormatter(formatter)
-
-    # Add handlers to logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
