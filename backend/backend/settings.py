@@ -125,8 +125,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CORS_ALLOW_CREDENTIALS = True
+
 # Whitelist of origins that are allowed to make cross-site HTTP requests.
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5500",
     "http://127.0.0.1:5500", # Add the IP version as well, just in case
+    "null",
 ]

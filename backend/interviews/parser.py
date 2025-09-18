@@ -115,5 +115,5 @@ class ResumeParser:
             parsed_data = json.loads(clean_text)
             return parsed_data
         except Exception as e:
-            logger.error(f"Error during JD parsing: {e}")
+            logger.error(f"Error during Resume parsing: {e}")
             return None
