@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-JD Similarity Checker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #results {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        #error-message {
+            color: #e74c3c;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+        pre {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Resume-JD Similarity Checker</h1>
+        <form id="upload-form">
+            <div class="form-group">
+                <label for="resume">Upload Resume:</label>
+                <input type="file" id="resume" name="resume" required>
+            </div>
+            <div class="form-group">
+                <label for="job_description">Upload Job Description:</label>
+                <input type="file" id="job_description" name="job_description" required>
+            </div>
+            <button type="submit">Check Similarity</button>
+        </form>
+
+        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="error-message"></div>
+        <div id="results" style="display: none;">
+            <h2>Results</h2>
+            <div class="score">Similarity Score: <span id="similarity-score"></span></div>
+            
+            <h3>Job Description Data:</h3>
+            <pre><code id="jd-data"></code></pre>
+
+            <h3>Resume Data:</h3>
+            <pre><code id="resume-data"></code></pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('upload-form');
+            const resultsDiv = document.getElementById('results');
+            const loader = document.getElementById('loader');
+            const errorMessageDiv = document.getElementById('error-message');
+            
+            // Result elements
+            const similarityScoreSpan = document.getElementById('similarity-score');
+            const jdDataCode = document.getElementById('jd-data');
+            const resumeDataCode = document.getElementById('resume-data');
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault(); // Prevent the default form submission (page reload)
+
+                // --- UI SETUP ---
+                resultsDiv.style.display = 'none';
+                errorMessageDiv.textContent = '';
+                loader.style.display = 'block';
+
+                const formData = new FormData(form);
+
+                try {
+                    // --- API CALL ---
+                    // IMPORTANT: Replace this URL with your actual API endpoint.
+                    const response = await fetch('http://127.0.0.1:8000/api/similarity/', {
+                        method: 'POST',
+                        body: formData,
+                        // Do NOT set Content-Type header manually for multipart/form-data.
+                        // The browser will set it correctly with the required boundary.
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        // If the server returns an error (4xx or 5xx)
+                        throw new Error(data.error || 'An unknown error occurred.');
+                    }
+                    
+                    // --- DISPLAY SUCCESSFUL RESULTS ---
+                    displayResults(data);
+
+                } catch (error) {
+                    // --- DISPLAY ERROR MESSAGE ---
+                    errorMessageDiv.textContent = `Error: ${error.message}`;
+                } finally {
+                    // --- UI CLEANUP ---
+                    loader.style.display = 'none';
+                }
+            });
+
+            function displayResults(data) {
+                similarityScoreSpan.textContent = parseFloat(data.similarity_score).toFixed(4);
+                
+                // Pretty-print the JSON data
+                jdDataCode.textContent = JSON.stringify(data.jd_data, null, 2);
+                resumeDataCode.textContent = JSON.stringify(data.resume_data, null, 2);
+                
+                resultsDiv.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>

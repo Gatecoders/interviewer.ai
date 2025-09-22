@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume-JD Similarity Checker</title>
+    <title>AI Interview Platform</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -11,7 +11,7 @@
             color: #333;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Align to top for chat */
             min-height: 100vh;
             margin: 0;
             padding: 20px;
@@ -22,28 +22,17 @@
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
+            transition: all 0.3s ease-in-out;
         }
         h1 {
             text-align: center;
             color: #2c3e50;
             margin-bottom: 25px;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        input[type="file"] {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input[type="file"] { display: block; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
         button {
             width: 100%;
             padding: 12px;
@@ -54,139 +43,227 @@
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            margin-top: 10px;
         }
-        button:hover {
-            background-color: #2980b9;
-        }
+        button:hover { background-color: #2980b9; }
+        button#start-interview-btn { background-color: #27ae60; }
+        button#start-interview-btn:hover { background-color: #229954; }
+
         .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+            border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #results { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+        #error-message { color: #e74c3c; font-weight: bold; text-align: center; margin-top: 20px; }
+        pre { background-color: #ecf0f1; padding: 15px; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; font-size: 14px; }
+        .score { text-align: center; font-size: 1.5em; font-weight: bold; color: #27ae60; }
+
+        /* --- NEW INTERVIEW STYLES --- */
+        #interview-container { display: none; width: 100%; }
+        #chat-box {
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
         }
-        #results {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .chat-message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            line-height: 1.5;
         }
-        #error-message {
-            color: #e74c3c;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-        }
-        pre {
+        .ai-message {
             background-color: #ecf0f1;
-            padding: 15px;
-            border-radius: 6px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 14px;
+            color: #333;
+            align-self: flex-start;
         }
-        .score {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #27ae60;
+        .user-message {
+            background-color: #3498db;
+            color: white;
+            align-self: flex-end;
+        }
+        #interview-form { display: flex; gap: 10px; }
+        #interview-form input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Resume-JD Similarity Checker</h1>
-        <form id="upload-form">
-            <div class="form-group">
-                <label for="resume">Upload Resume:</label>
-                <input type="file" id="resume" name="resume" required>
+        <div id="upload-section">
+            <h1>Resume-JD Similarity Checker</h1>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="resume">Upload Resume:</label>
+                    <input type="file" id="resume" name="resume" required>
+                </div>
+                <div class="form-group">
+                    <label for="job_description">Upload Job Description:</label>
+                    <input type="file" id="job_description" name="job_description" required>
+                </div>
+                <button type="submit">Check Similarity</button>
+            </form>
+            <div id="loader" class="loader" style="display: none;"></div>
+            <div id="error-message"></div>
+            <div id="results" style="display: none;">
+                <h2>Results</h2>
+                <div class="score">Similarity Score: <span id="similarity-score"></span></div>
+                <button id="start-interview-btn" style="display: none;">Start AI Interview</button>
+                <h3>Job Description Data:</h3>
+                <pre><code id="jd-data"></code></pre>
+                <h3>Resume Data:</h3>
+                <pre><code id="resume-data"></code></pre>
             </div>
-            <div class="form-group">
-                <label for="job_description">Upload Job Description:</label>
-                <input type="file" id="job_description" name="job_description" required>
-            </div>
-            <button type="submit">Check Similarity</button>
-        </form>
+        </div>
 
-        <div id="loader" class="loader" style="display: none;"></div>
-        <div id="error-message"></div>
-        <div id="results" style="display: none;">
-            <h2>Results</h2>
-            <div class="score">Similarity Score: <span id="similarity-score"></span></div>
-            
-            <h3>Job Description Data:</h3>
-            <pre><code id="jd-data"></code></pre>
-
-            <h3>Resume Data:</h3>
-            <pre><code id="resume-data"></code></pre>
+        <div id="interview-container">
+            <h1>AI Interview</h1>
+            <div id="chat-box">
+                </div>
+            <form id="interview-form">
+                <input type="text" id="user-answer" placeholder="Type your answer..." autocomplete="off" required>
+                <button type="submit">Send</button>
+            </form>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('upload-form');
+            // --- Global state to hold data between API calls ---
+            let jdData = null;
+            let resumeData = null;
+
+            // --- Element references ---
+            const uploadSection = document.getElementById('upload-section');
+            const interviewContainer = document.getElementById('interview-container');
+            const uploadForm = document.getElementById('upload-form');
+            const interviewForm = document.getElementById('interview-form');
             const resultsDiv = document.getElementById('results');
             const loader = document.getElementById('loader');
             const errorMessageDiv = document.getElementById('error-message');
-            
-            // Result elements
             const similarityScoreSpan = document.getElementById('similarity-score');
             const jdDataCode = document.getElementById('jd-data');
             const resumeDataCode = document.getElementById('resume-data');
+            const startInterviewBtn = document.getElementById('start-interview-btn');
+            const chatBox = document.getElementById('chat-box');
+            const userAnswerInput = document.getElementById('user-answer');
+            
+            // --- API URLs (replace if needed) ---
+            const SIMILARITY_URL = 'http://127.0.0.1:8000/api/similarity/';
+            const START_INTERVIEW_URL = 'http://127.0.0.1:8000/api/interview/start/';
+            const RESPOND_INTERVIEW_URL = 'http://127.0.0.1:8000/api/interview/respond/';
 
-            form.addEventListener('submit', async function(event) {
-                event.preventDefault(); // Prevent the default form submission (page reload)
-
-                // --- UI SETUP ---
+            // --- Event Listener for Similarity Form ---
+            uploadForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
                 resultsDiv.style.display = 'none';
+                startInterviewBtn.style.display = 'none';
                 errorMessageDiv.textContent = '';
                 loader.style.display = 'block';
 
-                const formData = new FormData(form);
-
                 try {
-                    // --- API CALL ---
-                    // IMPORTANT: Replace this URL with your actual API endpoint.
-                    const response = await fetch('http://127.0.0.1:8000/api/extract/', {
+                    const response = await fetch(SIMILARITY_URL, {
                         method: 'POST',
-                        body: formData,
-                        // Do NOT set Content-Type header manually for multipart/form-data.
-                        // The browser will set it correctly with the required boundary.
+                        body: new FormData(uploadForm),
+                        credentials: 'include', // <-- UPDATED
                     });
-
                     const data = await response.json();
-
-                    if (!response.ok) {
-                        // If the server returns an error (4xx or 5xx)
-                        throw new Error(data.error || 'An unknown error occurred.');
-                    }
+                    if (!response.ok) throw new Error(data.error || 'An unknown error occurred.');
                     
-                    // --- DISPLAY SUCCESSFUL RESULTS ---
                     displayResults(data);
-
                 } catch (error) {
-                    // --- DISPLAY ERROR MESSAGE ---
                     errorMessageDiv.textContent = `Error: ${error.message}`;
                 } finally {
-                    // --- UI CLEANUP ---
                     loader.style.display = 'none';
                 }
             });
 
             function displayResults(data) {
+                jdData = data.jd_data;
+                resumeData = data.resume_data;
                 similarityScoreSpan.textContent = parseFloat(data.similarity_score).toFixed(4);
-                
-                // Pretty-print the JSON data
                 jdDataCode.textContent = JSON.stringify(data.jd_data, null, 2);
                 resumeDataCode.textContent = JSON.stringify(data.resume_data, null, 2);
-                
                 resultsDiv.style.display = 'block';
+                startInterviewBtn.style.display = 'block';
+            }
+
+            // --- Event Listener for Start Interview Button ---
+            startInterviewBtn.addEventListener('click', async () => {
+                uploadSection.style.display = 'none';
+                interviewContainer.style.display = 'block';
+                addMessageToChat('Initializing interview...', 'ai');
+
+                try {
+                    const response = await fetch(START_INTERVIEW_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jd_data: jdData,
+                            resume_data: resumeData,
+                        }),
+                        credentials: 'include', // <-- UPDATED
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to start interview.');
+
+                    const initMessage = chatBox.querySelector('.chat-message');
+                    initMessage.textContent = data.question;
+                } catch (error) {
+                    addMessageToChat(`Error: ${error.message}`, 'ai');
+                }
+            });
+
+            // --- Event Listener for Sending an Interview Answer ---
+            interviewForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const userAnswer = userAnswerInput.value.trim();
+                if (!userAnswer) return;
+
+                addMessageToChat(userAnswer, 'user');
+                userAnswerInput.value = '';
+                addMessageToChat('Thinking...', 'ai', true);
+
+                try {
+                    const response = await fetch(RESPOND_INTERVIEW_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ answer: userAnswer }),
+                        credentials: 'include', // <-- UPDATED
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to get next question.');
+                    
+                    const thinkingMessage = chatBox.querySelector('.thinking');
+                    thinkingMessage.textContent = data.question;
+                    thinkingMessage.classList.remove('thinking');
+                } catch (error) {
+                    addMessageToChat(`Error: ${error.message}`, 'ai');
+                }
+            });
+
+            // --- Helper function to add messages to the chat box ---
+            function addMessageToChat(text, sender, isThinking = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', `${sender}-message`);
+                if (isThinking) {
+                    messageDiv.classList.add('thinking');
+                }
+                messageDiv.textContent = text;
+                chatBox.appendChild(messageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
             }
         });
     </script>
