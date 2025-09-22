@@ -2,8 +2,7 @@ PROJECT: RESUME-JD SIMILARITY CHECKER
 
 DESCRIPTION
 -----------
-The application provides a simple interface to upload a resume and a job description file. The backend, built with Django, extracts the text from these documents, parses them to identify relevant sections like skills and responsibilities, and then uses a text vectorization model to compute a similarity score. This score quantifies how well the resume's skills match the job description's requirements.
-
+The application provides a simple interface to upload a resume and a job description file. The backend, built with Django, extracts the text from these documents, parses them to identify relevant sections like skills and responsibilities, and then uses a text vectorization model to compute a similarity score. This score quantifies how well the resume's skills match the job description's requirements. Then one can proceed with chat based interview for now which will take place on the basis of resume and the job description.
 ---
 
 FEATURES
@@ -13,6 +12,7 @@ FEATURES
 - Structured Data Parsing: Parses unstructured text from the resume and JD into a structured JSON format, identifying key information like contact details, skills, work experience, and required qualifications.
 - Skill Matching: Compares the skills listed in the resume against the required skills in the job description.
 - Similarity Score: Calculates and displays a similarity score, providing a quantitative measure of how well the resume matches the job description.
+- Interview: AI will act as an interviewer and will take interview of the candidate.
 - CORS Support: Includes Cross-Origin Resource Sharing (CORS) headers to allow the frontend to communicate with the backend API from a different origin.
 
 ---
@@ -83,22 +83,3 @@ USAGE
 
 ---
 
-API ENDPOINT
-------------
-The backend provides the following API endpoint:
-
-- POST /api/extract/:
-  - Description: Accepts a resume and a job description file, and returns a similarity score along with the parsed data.
-  - Request Body: multipart/form-data with two fields:
-    - resume: The resume file.
-    - job_description: The job description file.
-  - Success Response (200 OK):
-    {
-      "similarity_score": 0.8571,
-      "jd_data": { ... },
-      "resume_data": { ... }
-    }
-  - Error Response (400/500):
-    {
-      "error": "Error message"
-    }
