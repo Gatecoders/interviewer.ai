@@ -1,85 +1,95 @@
-PROJECT: RESUME-JD SIMILARITY CHECKER
+Resume-JD Similarity & Interview Prep Platform
 
-DESCRIPTION
------------
-The application provides a simple interface to upload a resume and a job description file. The backend, built with Django, extracts the text from these documents, parses them to identify relevant sections like skills and responsibilities, and then uses a text vectorization model to compute a similarity score. This score quantifies how well the resume's skills match the job description's requirements. Then one can proceed with chat based interview for now which will take place on the basis of resume and the job description.
+Bridge the gap between your resume and your dream job by analyzing resume-job description fit and practicing with a dynamic AI interviewer.
+
+
+
+This tool provides a quantitative similarity score between a resume and a job description and allows candidates to practice for interviews with an AI that asks questions based on their specific resume and the target job.
+
 ---
 
 FEATURES
 --------
-- File Upload: Easily upload resume and job description files through a user-friendly web interface.
-- Text Extraction: Automatically extracts text from uploaded documents.
-- Structured Data Parsing: Parses unstructured text from the resume and JD into a structured JSON format, identifying key information like contact details, skills, work experience, and required qualifications.
-- Skill Matching: Compares the skills listed in the resume against the required skills in the job description.
-- Similarity Score: Calculates and displays a similarity score, providing a quantitative measure of how well the resume matches the job description.
-- Interview: AI will act as an interviewer and will take interview of the candidate.
-- CORS Support: Includes Cross-Origin Resource Sharing (CORS) headers to allow the frontend to communicate with the backend API from a different origin.
+* Seamless Document Upload: Easily upload your resume and the job description in various formats (e.g., PDF, DOCX).
+* Intelligent Text Parsing: Automatically extracts and structures key information from unstructured text, identifying contact details, skills, work experience, and required qualifications into JSON format.
+* Similarity Scoring: Leverages Google's text embedding models to calculate a precise similarity score, giving you a clear measure of your resume's alignment with the job requirements.
+* AI-Powered Chat Interview: Engage in a preliminary text-based interview with an AI that uses the context of your resume and the job description to ask relevant questions.
 
 ---
 
-UPCOMING FEATURES: VERSION 2.0
-------------------------------
-The next major version will transform this tool into a comprehensive interview preparation platform by introducing an interactive, AI-powered mock interview feature.
+UPCOMING IN VERSION 2.0: THE INTERVIEW COACH
+------------------------------------------------------
+The next major version will transform this tool into a comprehensive interview preparation platform.
 
-* Real-Time Mock Interviews with LLMs
-Once a resume and JD are uploaded and analyzed, users can initiate a real-time practice interview. An AI, powered by a Large Language Model (LLM), will assume the role of an interviewer and conduct a spoken or text-based interview session.
-
-* Dynamic & Contextual Question Generation
-The AI interviewer won't ask generic questions. Instead, it will generate questions dynamically based on the content of the uploaded resume and job description. For example:
-  - It might ask for more details about a specific project listed on the resume.
-  - It could pose a technical challenge related to a required skill in the job description.
-  - It may present a behavioral question based on the company's profile and the role's responsibilities.
-
-* Customizable Interview Sessions
-Users will have the ability to tailor their practice sessions by selecting:
-  - Type of Interview: Choose from different formats like Technical, Behavioral, or a Mixed session.
-  - Difficulty Level: Adjust the complexity of the questions (Easy, Medium, or Hard).
-  - Number of Rounds: Schedule a single comprehensive interview or simulate a multi-round process by selecting the desired number of rounds.
+* Real-Time Mock Interviews: Practice a full interview with an LLM-powered AI that acts as the interviewer in a spoken or text-based session.
+* Dynamic & Contextual Questions: The AI generates questions tailored specifically to your resume and the job description. For example:
+    * "Tell me more about your role in the 'Project X' you listed on your resume."
+    * "This role requires extensive experience with Kubernetes. Can you describe a complex deployment you've managed?"
+* Customizable Interview Sessions: Tailor your practice by selecting the interview type (Technical, Behavioral), difficulty level, and number of rounds.
 
 ---
 
-TECHNOLOGIES USED
------------------
-- Backend:
-  - Python
-  - Django
-  - Django REST Framework
-
-- Frontend:
-  - HTML
-  - CSS
-  - JavaScript
-
-- Machine Learning/NLP:
-  - Google Embedding Models (e.g., 'text-embedding-004') for text vectorization.
-  - NumPy for numerical operations and similarity calculation.
+TECH STACK
+----------
+* Backend:
+    * Python
+    * Django
+    * Django REST Framework
+* Frontend:
+    * HTML
+    * CSS
+    * JavaScript
+* AI / NLP:
+    * Google Embedding Models (e.g., text-embedding-004)
+    * NumPy
 
 ---
 
 SETUP AND INSTALLATION
 ----------------------
-1. Clone the repository:
-   git clone <repository-url>
 
-2. Navigate to the project directory:
-   cd <project-directory>
+Prerequisites
+* Python 3.8+
+* pip (Python package installer)
 
-3. Install the required dependencies:
-   pip install -r requirements.txt
+Installation Steps
 
-4. Run the Django development server:
-   python manage.py runserver
-   
-   The backend API will be available at http://127.0.0.1:8000.
+1.  Clone the repository:
+    git clone <repository-url>
+    cd <project-directory>
+
+2.  Create and activate a virtual environment:
+    * Windows:
+        python -m venv venv
+        .\venv\Scripts\activate
+    * macOS / Linux:
+        python3 -m venv venv
+        source venv/bin/activate
+
+3.  Install the required dependencies:
+    pip install -r requirements.txt
+
+4.  Set up environment variables:
+    Create a file named .env in the root project directory and add your Google API Key.
+    
+    GOOGLE_API_KEY="YOUR_API_KEY_HERE"
+
+    You can obtain a free Google API key from the Google AI for Developers website (https://ai.google.dev/).
+
+5.  Apply database migrations:
+    python manage.py migrate
+
+6.  Run the development server:
+    python manage.py runserver
+
+    The backend API will be available at http://127.0.0.1:8000.
 
 ---
 
 USAGE
 -----
-1. Open the index.html file in your web browser.
-2. Use the form to upload a resume file and a job description file.
-3. Click the "Check Similarity" button.
-4. The application will display the similarity score, as well as the parsed JSON data from both the job description and the resume.
-
----
-
+1.  Open the index.html file in your web browser.
+2.  Upload your resume file and a job description file using the form.
+3.  Click the "Check Similarity" button.
+4.  The application will display the similarity score and the parsed JSON data from both documents.
+5.  You can then proceed to the chat interface to begin your interview session.
