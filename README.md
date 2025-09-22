@@ -1,3 +1,7 @@
+> **IMPORTANT: USAGE RESTRICTIONS** ⚠️
+>
+> This is a portfolio project. The source code is public for demonstration purposes only. You are welcome to view and fork the repository to inspect the code, but you are **not permitted** to use, copy, modify, or distribute any part of this code in your own projects. All rights are reserved.
+
 Resume-JD Similarity & Interview Prep Platform
 
 Bridge the gap between your resume and your dream job by analyzing resume-job description fit and practicing with a dynamic AI interviewer.
